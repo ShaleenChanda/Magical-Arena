@@ -31,8 +31,7 @@ const (
 // structured to handle various user inputs and scenarios. The ManageMatchesInArena function is
 // responsible for handling the process of entering, conducting, and managing matches within the arena.
 //
-// Example:
-//   main()
+//
 //
 // Note: Ensure that necessary color constants, getUserInput, and ManageMatchesInArena are defined
 // for the proper functioning of this application.
