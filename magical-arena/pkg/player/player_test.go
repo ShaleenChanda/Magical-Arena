@@ -6,7 +6,6 @@ import (
 	"testing"
 )
 
-
 func TestNewPlayer(t *testing.T) {
 	//testing NewPlayer and GetPlayerBaseAttributes as a single unit
 	//TEST 1: create a player name shaleen with health 100, strength 10, attack 5, and check the assignment of values is correct
@@ -28,7 +27,7 @@ func TestNewPlayer(t *testing.T) {
 	//TEST 2: create a playerA with health 50, strength 5, attack 2
 	//		create a playerB with health 100, strength 10, attack 5, and check the assignment of values is correct
 	playerA := NewPlayer("PlayerA", 50, 5, 2)
-	playerB := NewPlayer("PlayerB",100, 10, 5)
+	playerB := NewPlayer("PlayerB", 100, 10, 5)
 	nameA, healthA, strengthA, attackA := GetPlayerBaseAttributes(playerA)
 	nameB, healthB, strengthB, attackB := GetPlayerBaseAttributes(playerB)
 	//check playerA
@@ -59,12 +58,12 @@ func TestNewPlayer(t *testing.T) {
 	}
 
 	//TEST 3: create a playerA with health 0, strength 0, attack 0
-	//create a playerB with health 0, strength 0, attack 0, and check that they are equal. 
+	//create a playerB with health 0, strength 0, attack 0, and check that they are equal.
 	playerA = NewPlayer("0", 0, 0, 0)
-	playerB = NewPlayer("0",0, 0, 0)
+	playerB = NewPlayer("0", 0, 0, 0)
 	nameA, healthA, strengthA, attackA = GetPlayerBaseAttributes(playerA)
 	nameB, healthB, strengthB, attackB = GetPlayerBaseAttributes(playerB)
-	if(nameA != nameB || healthA != healthB || strengthA != strengthB || attackA != attackB) {
+	if nameA != nameB || healthA != healthB || strengthA != strengthB || attackA != attackB {
 		t.Errorf("Expected playerA and playerB to be equal, got %d %d %d and %d %d %d", healthA, strengthA, attackA, healthB, strengthB, attackB)
 	}
 }
@@ -72,7 +71,7 @@ func TestNewPlayer(t *testing.T) {
 // TestMain runs the main testing suite.
 func TestMain(m *testing.M) {
 	fmt.Println("Testing player package...")
-	Result:=m.Run()
+	Result := m.Run()
 	fmt.Println("Testing complete.")
 	os.Exit(Result)
 }

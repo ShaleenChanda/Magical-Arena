@@ -1,6 +1,5 @@
 package player
 
-
 // Player represents a player in the game. It has attributes for health, strength and attack.
 type Player struct {
 	name string
@@ -8,10 +7,9 @@ type Player struct {
 	health int
 
 	strength int
-	
+
 	attack int
 }
-
 
 // NewPlayer creates and initializes a new Player instance with the specified attributes.
 //
@@ -52,6 +50,3 @@ func NewPlayer(name string, health, strength, attack int) *Player {
 func GetPlayerBaseAttributes(p *Player) (string, int, int, int) {
 	return p.name, p.health, p.strength, p.attack
 }
-
-
-
