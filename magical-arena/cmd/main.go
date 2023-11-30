@@ -21,6 +21,21 @@ const (
 	resetColor   = "\033[0m"
 )
 
+// main is the entry point for the Magical Arena application. It presents a console-based menu
+// allowing users to enter the arena or exit the application. Once inside the arena, users can
+// choose to teleport into matches or exit back to the main menu. The main function utilizes
+// a loop to provide a continuous user interface, handling user choices and invoking relevant
+// functions for match management.
+//
+// The color-coded console output enhances the visual experience, and the application logic is
+// structured to handle various user inputs and scenarios. The ManageMatchesInArena function is
+// responsible for handling the process of entering, conducting, and managing matches within the arena.
+//
+// Example:
+//   main()
+//
+// Note: Ensure that necessary color constants, getUserInput, and ManageMatchesInArena are defined
+// for the proper functioning of this application.
 func main() {
 	for {
 		fmt.Println(cyanColor + "Welcome to Magical Arena 1.0!" + resetColor)
@@ -39,7 +54,7 @@ func main() {
 		case 1:
 			fmt.Println(magentaColor + "Entering the arena..." + resetColor)
 			fmt.Println(cyanColor + "Welcome to the arena!" + resetColor)
-			fmt.Println(yellowColor + "Press 1 to start the match or press 0 to exit" + resetColor)
+			fmt.Println(yellowColor + "Press 1 to teleport into matches or press 0 to exit" + resetColor)
 
 			//take user input to enter a match or exit the application
 			choice, err := getUserInput("Enter your choice: ")
@@ -47,7 +62,7 @@ func main() {
 			//entering inside matches
 			if choice == 1 {
 				// this function will handle the logic of starting matches and concluding them
-				startMatchesInArena()
+				ManageMatchesInArena()
 			}
 
 			if err != nil {
@@ -92,7 +107,7 @@ func getUserInput(prompt string) (int, error) {
 	return choice, nil
 }
 
-// startMatchesInArena initiates the process for entering and conducting matches in the arena.
+// ManageMatchesInArena initiates the process for entering and conducting matches in the arena.
 //
 // This function presents the user with options to either enter a new match or exit the arena.
 // It prompts the user for input and creates Player instances for both participants.
@@ -102,16 +117,16 @@ func getUserInput(prompt string) (int, error) {
 // The function continues running until the user chooses to exit the matches section by entering 0.
 //
 // Example:
-//   startMatchesInArena()
+//   ManageMatchesInArena()
 //
 // Note: Ensure that the necessary color constants, getUserInput, getPlayerAttributes, isValidPlayerAttributes,
 // and match packages are correctly imported and defined for the proper functioning of this function.
-func startMatchesInArena() {
+func ManageMatchesInArena() {
 	matchRecords := make(map[int]string)
 	matchNo := 1
 
 	for {
-		fmt.Println(yellowColor + "Press 1 to enter a match or press 0 to exit the arena" + resetColor)
+		fmt.Println(yellowColor + "Press 1 to start a match or press 0 to exit the arena" + resetColor)
 
 		choice, err := getUserInput("Enter your choice: ")
 		if err != nil {
@@ -273,6 +288,11 @@ func getIntegerInput(prompt string) (int, error) {
 	return strconv.Atoi(input)
 }
 
+//Wrapper function for getIntegerInput to be used in tests
+func ExposeGetIntegerInput(prompt string) (int, error) {
+	return getIntegerInput(prompt)
+}
+
 // getStringInput prompts the user with the provided message,
 // reads their input from the standard input, trims leading/trailing
 // whitespaces, and returns the resulting string.
@@ -293,4 +313,9 @@ func getStringInput(prompt string) (string, error) {
 
 	// Trim leading/trailing whitespaces
 	return strings.TrimSpace(input), nil
+}
+
+//Wrapper function for getStringInput to be used in tests
+func ExposeGetStringInput(prompt string) (string, error) {
+	return getStringInput(prompt)
 }
