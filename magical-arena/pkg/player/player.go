@@ -53,3 +53,5 @@ func GetPlayerBaseAttributes(p *Player) (string, int, int, int) {
 	return p.name, p.health, p.strength, p.attack
 }
 
+
+
