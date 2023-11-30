@@ -3,22 +3,22 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"magical-arena/pkg/match"
+	"magical-arena/pkg/player"
 	"os"
 	"strconv"
 	"strings"
-	"magical-arena/pkg/match"
-	"magical-arena/pkg/player"
 )
 
 // different color schemes for terminal output
 const (
-    redColor     = "\033[31m"
-    greenColor   = "\033[32m"
-    yellowColor  = "\033[33m"
-    blueColor    = "\033[34m"
-    magentaColor = "\033[35m"
-    cyanColor    = "\033[36m"
-    resetColor   = "\033[0m"
+	redColor     = "\033[31m"
+	greenColor   = "\033[32m"
+	yellowColor  = "\033[33m"
+	blueColor    = "\033[34m"
+	magentaColor = "\033[35m"
+	cyanColor    = "\033[36m"
+	resetColor   = "\033[0m"
 )
 
 func main() {
@@ -40,13 +40,13 @@ func main() {
 			fmt.Println(magentaColor + "Entering the arena..." + resetColor)
 			fmt.Println(cyanColor + "Welcome to the arena!" + resetColor)
 			fmt.Println(yellowColor + "Press 1 to start the match or press 0 to exit" + resetColor)
-			
+
 			//take user input to enter a match or exit the application
 			choice, err := getUserInput("Enter your choice: ")
-			
+
 			//entering inside matches
 			if choice == 1 {
-				// this function will handle the logic of starting matches and concluding them 
+				// this function will handle the logic of starting matches and concluding them
 				startMatchesInArena()
 			}
 
@@ -92,11 +92,22 @@ func getUserInput(prompt string) (int, error) {
 	return choice, nil
 }
 
-
-
+// startMatchesInArena initiates the process for entering and conducting matches in the arena.
+//
+// This function presents the user with options to either enter a new match or exit the arena.
+// It prompts the user for input and creates Player instances for both participants.
+// The function then validates the attributes of both players and proceeds to create and conduct a new match.
+// The match result and round records are stored in a map, and the match number is incremented for each new match.
+//
+// The function continues running until the user chooses to exit the matches section by entering 0.
+//
+// Example:
+//   startMatchesInArena()
+//
+// Note: Ensure that the necessary color constants, getUserInput, getPlayerAttributes, isValidPlayerAttributes,
+// and match packages are correctly imported and defined for the proper functioning of this function.
 func startMatchesInArena() {
 	matchRecords := make(map[int]string)
-	matchRoundRecords := make(map[int]string)
 	matchNo := 1
 
 	for {
@@ -132,13 +143,24 @@ func startMatchesInArena() {
 				continue
 			}
 
+			// Create a new match
+			currentMatch := match.NewMatch(player1, player2)
+
+			//conducting the match
+			_, matchResult := match.ConductMatch(currentMatch)
+
+			//storing the match result and match round records in map
+			matchRecords[matchNo] = matchResult
+
+			//incrementing the match number
+			matchNo++
+
 			fmt.Println(greenColor + "Match result: " + matchResult + resetColor)
 		default:
 			fmt.Println(redColor + "Invalid choice. Please enter 0 or 1." + resetColor)
 		}
 	}
 }
-
 
 // validatePlayerAttacks checks if the attacks of two players are within valid ranges to proceed with a match.
 // It compares the attack strength of one player against the health of the other player, considering specific conditions.
@@ -185,24 +207,13 @@ func isValidPlayerAttributes(player1, player2 *player.Player) bool {
 		return false
 	}
 
-	if playerAttack1 >= playerStrength2*6 {
-		fmt.Println(redColor + "Player 1 attack is too high to damage Player 2." + resetColor)
-		return false
-	}
-
 	if playerAttack2*6 <= playerStrength1 {
 		fmt.Println(redColor + "Player 2 attack is too low to damage Player 1." + resetColor)
 		return false
 	}
 
-	if playerAttack2 >= playerStrength1*6 {
-		fmt.Println(redColor + "Player 2 attack is too high to damage Player 1." + resetColor)
-		return false
-	}
-
 	return true
 }
-
 
 // getPlayerAttributes prompts the user to enter attributes for a player and returns a new Player instance.
 //
@@ -238,7 +249,6 @@ func getPlayerAttributes(playerName string) (*player.Player, error) {
 	return player.NewPlayer(name, health, strength, attack), nil
 }
 
-
 // getIntegerInput prompts the user with the provided message,
 // reads their input from the standard input, trims leading/trailing
 // whitespaces, and converts the input to an integer.
@@ -258,11 +268,10 @@ func getIntegerInput(prompt string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	
+
 	// Converting the input to an integer
 	return strconv.Atoi(input)
 }
-
 
 // getStringInput prompts the user with the provided message,
 // reads their input from the standard input, trims leading/trailing
