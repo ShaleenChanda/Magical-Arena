@@ -4,6 +4,8 @@ package match
 import (
 	"testing"
 	"magical-arena/pkg/player"
+	"fmt"
+	"os"
 )
 
 
@@ -182,4 +184,70 @@ func TestGetConductRound(t *testing.T){
 	if healthB != 100 {
 		t.Errorf("Expected healthB to be 100, got %d", healthB)
 	}
+}
+
+
+// TestGetSwitchCurrentPlayer tests the switching of the current player between playerA and playerB.
+//
+// TEST 1: If the current player is playerA, it should switch to playerB.
+// - Create playerA and playerB with different attributes.
+// - Set currentPlayer to playerA and call GetSwitchCurrentPlayer.
+// - Check if the currentPlayerName is now "PlayerB".
+//
+// TEST 2: If the current player is playerB, it should switch to playerA.
+// - Create playerA and playerB with different attributes.
+// - Set currentPlayer to playerB and call GetSwitchCurrentPlayer.
+// - Check if the currentPlayerName is now "PlayerA".
+func TestGetSwitchCurrentPlayer(t *testing.T){
+	// TEST 1: if current player is playerA, switch to playerB
+	playerA := player.NewPlayer("PlayerA", 100, 10, 10)
+	currentPlayer := playerA
+	playerB := player.NewPlayer("PlayerB", 50, 5, 2)
+	GetSwitchCurrentPlayer(&currentPlayer, playerA, playerB)
+	currentPlayerName, _, _, _ := player.GetPlayerBaseAttributes(currentPlayer)
+	if(currentPlayerName != "PlayerB"){
+		t.Errorf("Expected currentPlayerName to be PlayerB, got %s", currentPlayerName)
+	}
+
+
+	// TEST 2: if current player is playerB, switch to playerA
+	playerA = player.NewPlayer("PlayerA", 100, 10, 10)
+	playerB = player.NewPlayer("PlayerB", 50, 5, 2)
+	currentPlayer = playerB
+	GetSwitchCurrentPlayer(&currentPlayer, playerA, playerB)
+	currentPlayerName, _, _, _ = player.GetPlayerBaseAttributes(currentPlayer)
+	if(currentPlayerName != "PlayerA"){
+		t.Errorf("Expected currentPlayerName to be PlayerA, got %s", currentPlayerName)
+	}
+}
+
+// TestGetSetMatchResult tests the GetSetMatchResult function, which determines the
+// result of a match based on the health attributes of the players.
+//
+// Test scenarios:
+//   1. Create a match with PlayerA's health 100 and PlayerB's health 0. Check that
+//      PlayerA wins.
+//   2. Create a match with PlayerA's health 0 and PlayerB's health 100. Check that
+//      PlayerB wins.
+func TestGetMatchResult(t *testing.T){
+	// TEST 1: playerA wins
+	matchResult := GetSetMatchResult("PlayerA", 100, "PlayerB", 0)
+	if matchResult != "PlayerA wins" {
+		t.Errorf("Expected matchResult to be 'PlayerA wins', got %s", matchResult)
+	}
+
+	// TEST 2: playerB wins
+	matchResult = GetSetMatchResult("PlayerA", 0, "PlayerB", 100)
+	if matchResult != "PlayerB wins" {
+		t.Errorf("Expected matchResult to be 'PlayerB wins', got %s", matchResult)
+	}
+}
+
+
+// TestMain runs the main testing suite.
+func TestMain(m *testing.M) {
+	fmt.Println("Testing player package...")
+	Result:=m.Run()
+	fmt.Println("Testing complete.")
+	os.Exit(Result)
 }

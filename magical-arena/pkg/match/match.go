@@ -39,8 +39,8 @@ func NewMatch(playerA, playerB *player.Player) *Match {
 }
 
 
-
-func ConductMatch(match *Match) {
+//
+func ConductMatch(match *Match) ([]string, string) {
 	// The player with lower health attacks first 
 	// determine the starting player
 	currentPlayer := determineStartingPlayer(match)
@@ -53,9 +53,8 @@ func ConductMatch(match *Match) {
 	//conducting the match
 	for !isMatchOver(healthA, healthB){
 		//conducting a round
-		roundResult, currentHealthA, currentHealthB := conductRound(currentPlayer, nameA, healthA, strengthA, attackA, nameB, healthB, strengthB, attackB, match)
+		roundResult, currentHealthA, currentHealthB := conductRound(currentPlayer, nameA, healthA, strengthA, attackA, nameB, healthB, strengthB, attackB)
 		match.roundResults = append(match.roundResults, roundResult)
-		//updating the health of the players
 		//updating the health of playerA
 		healthA = currentHealthA 
 		//updating the health of playerB
@@ -64,7 +63,8 @@ func ConductMatch(match *Match) {
 		switchCurrentPlayer(&currentPlayer, match.PlayerA, match.PlayerB)
 	}
 
-	upDateMatchResult(match, nameA, healthA, nameB, healthB)
+	match.result = setMatchResult(nameA, healthA, nameB, healthB)
+	return match.roundResults, match.result
 }
 
 
@@ -212,7 +212,7 @@ func conductRound(currentPlayer *player.Player, nameA string, healthA int, stren
 		roundResult = fmt.Sprintf("%s attacked %s for %d damage", nameA, nameB, damageToOtherPlayer)
 	}
 
-	//only for testing purposes current player is set to testA
+	//only for testing purposes current player is set to testB
 	if playerName == "testB" {
 		attackFromCurrentPlayer := attackB*4
 		defenceFromOtherPlayer := strengthA*4
@@ -248,7 +248,18 @@ func GetConductRound(currentPlayer *player.Player, nameA string, healthA int, st
 }
 
 
-//helper function to get max of two integers
+//max returns the maximum of two integers
+// 
+// Parameters:
+//   - a: An integer.
+//   - b: An integer.
+//
+// Returns:
+//   - int: The maximum of the two integers.
+//
+// Example:
+//   max := max(10, 20)
+//   fmt.Println(max) // Output: 20
 func max(a int, b int) int{
 	if a > b {
 		return a
@@ -257,16 +268,77 @@ func max(a int, b int) int{
 }
 
 
-func switchCurrentPlayer(currentPlayer **player.Player, playerA *player.Player, playerB *player.Player) string{
+// switchCurrentPlayer switches the current player between playerA and playerB based on the current player's reference.
+//
+// Parameters:
+//   - currentPlayer: A double pointer to the current player (type **player.Player).
+//   - playerA: A pointer to playerA (type *player.Player).
+//   - playerB: A pointer to playerB (type *player.Player).
+//
+// Note: The function modifies the value pointed to by currentPlayer to switch between playerA and playerB.
+func switchCurrentPlayer(currentPlayer **player.Player, playerA *player.Player, playerB *player.Player){
 	if *currentPlayer == playerA {
 		*currentPlayer = playerB
-		playerBName, _, _, _ := player.GetPlayerBaseAttributes(playerB)
-		return playerBName
 	} else {
 		*currentPlayer = playerA
-		playerAName, _, _, _ := player.GetPlayerBaseAttributes(playerA)
-		return playerAName
 	}
 }
 
+
+// GetSwitchCurrentPlayer is a helper function that provides external access to the private switchCurrentPlayer function for testing purposes.
+// It allows switching the current player between playerA and playerB based on the current player's reference.
+//
+// Parameters:
+//   - currentPlayer: A double pointer to the current player (type **player.Player).
+//   - playerA: A pointer to playerA (type *player.Player).
+//   - playerB: A pointer to playerB (type *player.Player).
+//
+// Example:
+//   // Assuming currentPlayer, playerA, and playerB are initialized.
+//   GetSwitchCurrentPlayer(&currentPlayer, playerA, playerB)
+func GetSwitchCurrentPlayer(currentPlayer **player.Player, playerA *player.Player, playerB *player.Player) {
+	switchCurrentPlayer(currentPlayer, playerA, playerB);
+}
+
+
+// setMatchResult determines the result of a match based on the health attributes of two players.
+//
+// Parameters:
+//   - nameA: The name of Player A.
+//   - healthA: The current health of Player A.
+//   - nameB: The name of Player B.
+//   - healthB: The current health of Player B.
+//
+// Returns:
+//   - string: A message indicating the winner of the match. The message is formatted as "{winner} wins".
+//
+// Example:
+//   result := setMatchResult("PlayerA", 0, "PlayerB", 30)
+//   fmt.Println(result) // Output: "PlayerB wins"
+func setMatchResult(nameA string, healthA int, nameB string, healthB int) string{
+	if(healthA <= 0){
+		return fmt.Sprintf("%s wins", nameB)
+	}else{
+		return fmt.Sprintf("%s wins", nameA)
+	}
+}
+
+
+// GetSetMatchResult is a testing wrapper for the setMatchResult function.
+//
+// Parameters:
+//   - nameA: The name of Player A.
+//   - healthA: The current health of Player A.
+//   - nameB: The name of Player B.
+//   - healthB: The current health of Player B.
+//
+// Returns:
+//   - string: A message indicating the winner of the match. The message is formatted as "{winner} wins".
+//
+// Example:
+//   result := GetSetMatchResult("PlayerA", 10, "PlayerB", 0)
+//   fmt.Println(result) // Output: "PlayerA wins"
+func GetSetMatchResult(nameA string, healthA int, nameB string, healthB int) string{
+	return setMatchResult(nameA, healthA, nameB, healthB)
+}
 
